@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+import "google/protobuf/timestamp.proto";
+
+option java_multiple_files = true;
+
+package com.customerservice.grpc.stubs;
+
+service CustomerService{
+  //unary - synchronous : client will send one request and server will respond with one response.
+  rpc getCustomerDetails(CustomerDetailsRequest) returns (CustomerDetails);
+
+  //sever streaming - Asynchronous : client will send one request and server will send stream of response to the client.
+  rpc getCustomerAccounts(CustomerDetails) returns(stream CustomerAccountDetails){}
+
+  //client streaming - Asynchronous : client will stream of request and server will respond with one response.
+  rpc getNewestAccount(stream CustomerAccountDetails) returns(CustomerAccountDetails){}
+
+  //bi-directional streaming - Asynchronous : client will send stream of request and server will respond with stream of response.
+  rpc getAccountsOlderThanOneYear(stream CustomerAccountDetails) returns (stream CustomerAccountDetails) {}
+}
+
+message CustomerDetailsRequest{
+  string idValue = 1;
+}
+
+message CustomerDetails{
+  IdType idType = 1;
+  string idValue = 2;
+  string name = 3;
+  int32 age = 4;
+  Gender gender = 5;
+}
+
+message CustomerAccountDetails{
+  string accountName = 1;
+  int32 billingAccountNumber = 2;
+  int32 msisdn = 3;
+  string customerId = 4;
+  google.protobuf.Timestamp accountCreationDate = 5;
+}
+
+enum IdType{
+  NRIC = 0; //enum values start with 0 instead of 1
+  BRN = 1;
+  PASSPORT = 2;
+}
+
+enum Gender{
+  MALE = 0;
+  FEMALE = 1;
+  OTHER = 2;
+}
